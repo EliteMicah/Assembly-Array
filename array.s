@@ -29,33 +29,34 @@ main:
     movq $0x20, %rdx        # length of the message    
     int  $0x80              # system interrupt to kernel
     
-# Initialization
-    movl $0, %eax           # set the sum to zero
-    movl $0, %ecx           # initialize loop counter to zero
-loop:
-    cmpl $4, %ecx           # check if loop counter is equal to array size
-    je end                  # if it is, exit the loop
-    movl array(%ecx), %edx  # load the current array element
-    addl %edx, %eax         # add the current element to the sum
-    incl %ecx               # increment the loop counter
-    jmp loop                # jump back to the start of the loop
-end:
-    pushl %eax              # push the sum onto the stack
-    call display_sum        # call the display_sum function
-    addl $4, %esp           # remove the sum from the stack
-    xorl %eax, %eax         # set the return value to zero
-    ret                     # return from the function
+    movl $array, %eax       # load the array into eax register
+    movl $4, %ecx           # initialize the counter with the number of elements
 
-display_sum:
-    pushl %ebp              # save the old base pointer
-    movl %esp, %ebp         # set the new base pointer
-    subl $4, %esp           # allocate space for the argument
-    movl 4(%ebp), %eax      # load the sum from the stack
-    pushl %eax              # push the sum as the argument
-    pushl $sum_format       # push the format string
-    call printf             # call the printf function
-    addl $8, %esp           # remove the arguments from the stack
-    leave                   # restore the old base pointer and return
+myLoop:
+    cmpl $0, %ecx           # check if the counter has reached zero (counting down)
+    je loopEnd              # if it has, jump to the end of the loop
+
+    movl (%eax), %ebx       # load the current element into EBX for processing
+# perform necessary operations on the current element here
+
+    addl $4, %eax           # increment the memory address to point to the next element
+    loop myLoop             # decrement the counter and jump back to the loop start
+
+loop_end:
+# code to be executed after the loop ends
+
+# Output the sum
+    movq $4, %rax           # sys_write    
+    movq $1, %rbx           # $1 is stdout    
+    movq $sumMsg, %rcx      # output sumMsg
+    movq $0x23, %rdx        # length of the message    
+    int  $0x80              # system interrupt to kernel
+    
+    movq $4, %rax           # sys_write    
+    movq $1, %rbx           # $1 is stdout    
+    movq $sum, %rcx         # output sum
+    movq $0x1, %rdx         # length of the message    
+    int  $0x80              # system interrupt to kernel 
 
 # Exit with return 0
 	movl $1, %eax           # exit(0) - $1 is sys_exit    
