@@ -1,12 +1,12 @@
 .data                                               # data segment
 msg1:
-.string "\nInitializing array with: 1, 1, 2, 3 "    # Array Msg
+.string "\nInitializing array... "    # Array Msg
 msg2:
 .string "\nAdding the values together...\n"         # Adding Array Msg
 sumMsg:
 .string "\nSum of the array is: "                   # Sum Output message
 array:
-    .long 1, 1, 2, 3                                # initialize the array with the four values
+    .long 2, 1, 2, 3                                # initialize the array with the four values
 
 .bss                            # uninitialized variables segment    
 	.lcomm sum, 32
@@ -20,7 +20,7 @@ main:
     movq $4, %rax               # sys_write    
     movq $1, %rbx               # $1 is stdout    
     movq $msg1, %rcx            # output msg1
-    movq $0x24, %rdx            # length of the message    
+    movq $0x16, %rdx            # length of the message    
     int  $0x80                  # system interrupt to kernel 
 
     movq $4, %rax               # sys_write    
