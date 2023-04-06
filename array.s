@@ -22,36 +22,37 @@ main:
     movq $msg1, %rcx        # output msg1
     movq $0x24, %rdx        # length of the message    
     int  $0x80              # system interrupt to kernel 
-    
+
     movq $4, %rax           # sys_write    
     movq $1, %rbx           # $1 is stdout    
     movq $msg2, %rcx        # output msg2
     movq $0x20, %rdx        # length of the message    
     int  $0x80              # system interrupt to kernel
-    
-    movl $array, %eax       # load the array into eax register
-    movl $4, %ecx           # initialize the counter with the number of elements
+
+# Setting up Loop
+    movl $0, %eax           # initialize sum to zero
+    movl $0, %ecx           # initialize loop counter to zero
 
 myLoop:
-    cmpl $0, %ecx           # check if the counter has reached zero (counting down)
-    je loopEnd              # if it has, jump to the end of the loop
+    cmp $4, %ecx            # check if loop counter is equal to four
+    je loopDone             # if so, jump to end of loop
+    movl array(,%ecx,4), %ebx   # get current array element and store in ebx
+    addl %ebx, %eax         # add current array element to sum
+    incl %ecx               # increment loop counter
+    jmp myLoop              # jump back to start of loop
 
-    movl (%eax), %ebx       # load the current element into EBX for processing
-# perform necessary operations on the current element here
-
-    addl $4, %eax           # increment the memory address to point to the next element
-    loop myLoop             # decrement the counter and jump back to the loop start
-
-loop_end:
-# code to be executed after the loop ends
+loopDone:
+    movl %eax, %ebx         # move sum to ebx for ASCII conversion
+    add $0x30, %bl          # convert most significant digit to ASCII
+    movb %bl, sum           # store most significant digit
 
 # Output the sum
     movq $4, %rax           # sys_write    
     movq $1, %rbx           # $1 is stdout    
     movq $sumMsg, %rcx      # output sumMsg
-    movq $0x23, %rdx        # length of the message    
+    movq $0x16, %rdx        # length of the message    
     int  $0x80              # system interrupt to kernel
-    
+
     movq $4, %rax           # sys_write    
     movq $1, %rbx           # $1 is stdout    
     movq $sum, %rcx         # output sum
@@ -63,4 +64,3 @@ loop_end:
 	movl $0, %ebx           # 0 is return value    
 	int  $0x80              # system interrupt to kernel    
 	ret
-	
