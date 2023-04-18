@@ -6,7 +6,7 @@ msg2:
 sumMsg:
 .string "\nSum of the array is: "                   # Sum Output message
 array:
-    .long 2, 1, 2, 3                                # initialize the array with the four values
+    .long 1, 1, 2, 3                                # initialize the array with the four values
 
 .bss                            # uninitialized variables segment    
 	.lcomm sum, 32
